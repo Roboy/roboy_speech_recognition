@@ -14,7 +14,7 @@ In order to synthesize text call the following service which will return the suc
 rosservice call /TextToSay "hello! i'm roboy"
 ```
 
-To recognize speech use the following service with will return the recognized string: 
+To recognize speech use the following service which will return the recognized string: 
 ```
 rosservice call /TextSpoken 
 ```
