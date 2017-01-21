@@ -13,7 +13,7 @@ sys.path.append(os.path.join(abs_path, "..", "..", "common"))
 from bing_voice import *
 from  bing_tts.srv import *
 
-BING_KEY = 'f03ec159eb2c4f1dafffebc5750037f2'
+BING_KEY = ''
 
 def handle_tts(req):
     try:
