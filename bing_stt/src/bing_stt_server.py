@@ -19,7 +19,7 @@ from  bing_stt.srv import *
 
 
 
-BING_KEY = 'f03ec159eb2c4f1dafffebc5750037f2'
+BING_KEY = ''
 
 def stt_with_vad(bing):
 
