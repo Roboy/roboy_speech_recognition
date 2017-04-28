@@ -1,0 +1,3 @@
+<launch>
+	<node name="speech_recognize" pkg="bing_stt" type="bing_stt_server.py" output="screen" />
+</launch>

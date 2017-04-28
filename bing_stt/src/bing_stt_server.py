@@ -8,8 +8,8 @@ import os
 import sys
 import signal
 import pyaudio
-
-import ipdb 
+import traceback
+import pdb 
 
 abs_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(abs_path, "..", "..", "common"))
@@ -19,7 +19,7 @@ from  bing_stt.srv import *
 
 
 
-BING_KEY = ''
+BING_KEY = 'f03ec159eb2c4f1dafffebc5750037f2'
 
 def stt_with_vad(bing):
 
@@ -102,11 +102,14 @@ def stt_with_vad(bing):
 
         # recognize speech using Microsoft Bing Voice Recognition
         try:
+            # pdb.set_trace()
             text = bing.recognize(data, language='en-US')
+            # pdb.set_trace()
             print('Bing:' + text.encode('utf-8'))
             stream.close()
             return text
         except UnknownValueError:
+            traceback.print_exc()
             print("Microsoft Bing Voice Recognition could not understand audio")
         except RequestError as e:
             print("Could not request results from Microsoft Bing Voice Recognition service; {0}".format(e))
