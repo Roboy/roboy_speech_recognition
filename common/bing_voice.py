@@ -11,7 +11,6 @@ import io
 from monotonic import monotonic
 from urllib import urlencode
 from urllib2 import Request, urlopen, URLError, HTTPError 
-import ipdb
 import httplib
 import numpy as np
 import struct
@@ -127,6 +126,7 @@ class BingVoice():
     def recognize(self, audio_data, language="en-US", show_all=False):
         self.auth()
         wav_data = self.to_wav(audio_data)
+
         url = "https://speech.platform.bing.com/recognize?{0}".format(urlencode({
             "version": "3.0",
             "requestid": uuid.uuid4(),
@@ -150,6 +150,7 @@ class BingVoice():
         except URLError as e:
             raise RequestError("recognition connection failed: {0}".format(e.reason))
         response_text = response.read().decode("utf-8")
+        print response_text
         result = json.loads(response_text)
 
         # return results
@@ -235,6 +236,7 @@ class BingVoice():
                 wav_writer.writeframes(raw_data)
                 wav_data = wav_file.getvalue()
             finally:  # make sure resources are cleaned up
+                wav_file.write("test.wav")
                 wav_writer.close()
         return wav_data
 

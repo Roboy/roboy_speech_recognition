@@ -15,11 +15,11 @@ abs_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(abs_path, "..", "..", "common"))
 
 from bing_voice import *
-from  bing_stt.srv import *
+from roboy_communication_cognition.srv import RecognizeSpeech
 
 
 
-BING_KEY = 'f03ec159eb2c4f1dafffebc5750037f2'
+BING_KEY = ''
 
 def stt_with_vad(bing):
 
@@ -131,8 +131,8 @@ def handle_stt(req):
 	return queue.get()
 
 def stt_server():
-    rospy.init_node('TextSpoken')
-    s = rospy.Service('TextSpoken', TextSpoken, handle_stt)
+    rospy.init_node('roboy_speech_recognition')
+    s = rospy.Service('RecognizeSpeech', RecognizeSpeech, handle_stt)
 
     global bing 
     bing = BingVoice(BING_KEY)

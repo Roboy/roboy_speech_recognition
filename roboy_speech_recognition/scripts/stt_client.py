@@ -7,12 +7,12 @@ import ipdb
 import os.path, sys
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 
-from bing_stt.srv import *
+from roboy_communication_cognition.srv import RecognizeSpeech
 
 def stt_client():
-	rospy.wait_for_service("TextSpoken")
+	rospy.wait_for_service("RecognizeSpeech")
 	try:
-		stt = rospy.ServiceProxy('TextSpoken', TextSpoken)
+		stt = rospy.ServiceProxy('RecognizeSpeech', RecognizeSpeech)
 		resp = stt()
 		print resp.text
 		return resp.text

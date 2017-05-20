@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
-  <name>bing_stt</name>
-  <version>0.0.1</version>
+  <name>roboy_speech_recognition</name>
+  <version>0.0.2</version>
   <description>Speech to text using Bing Speech API</description>
 
   <maintainer email="unicorn@roboy.org">Alona Kharchenko</maintainer>
@@ -14,11 +14,13 @@
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>message_generation</build_depend>
-  
+  <build_depend>roboy_communication_cognition</build_depend>
+
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>message_runtime</run_depend>
   <run_depend>message_generation</run_depend>
+  <run_depend>roboy_communication_cognition</run_depend>
 
 </package>
