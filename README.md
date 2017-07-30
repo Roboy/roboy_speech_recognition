@@ -6,6 +6,11 @@ ROS nodes for Bing Speech API services
 - `pyaudio`
 - `webrtcvad`
 
+```
+sudo apt install python-pyaudio
+pip install -r requirements.txt
+```
+
 ## Usage
 In order to synthesize text call the following service which will return the success status:
 ```
