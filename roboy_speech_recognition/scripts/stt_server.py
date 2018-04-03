@@ -16,6 +16,8 @@ sys.path.append(os.path.join(abs_path, "..", "..", "common"))
 
 from bing_voice import *
 from roboy_communication_cognition.srv import RecognizeSpeech
+from roboy_communication_control.msg import ControlLeds
+from std_msgs.msg import Empty
 
 
 
@@ -117,23 +119,35 @@ def stt_with_vad(bing):
         got_a_sentence = False
             
     stream.close()
-
     return text
 
 def stt_subprocess(q):
 	q.put(stt_with_vad(bing))
 
 def handle_stt(req):
-	queue = Queue()
+	msg = ControlLeds()
+        msg.mode=2
+        msg.duration=0
+        ledmode_pub.publish(msg)
+        queue = Queue()
 	p = Process(target = stt_subprocess, args = (queue,))
 	p.start()
 	p.join()
+        msg = Empty()
+        ledfreeze_pub.publish(msg)
 	return queue.get()
+        #return stt_with_vad(bing)
 
 def stt_server():
-    rospy.init_node('roboy_speech_recognition')
+    #rospy.init_node('roboy_speech_recognition')
     s = rospy.Service('/roboy/cognition/speech/recognition', RecognizeSpeech, handle_stt)
-
+    global ledmode_pub
+    ledmode_pub = rospy.Publisher("/roboy/control/matrix/leds/mode", ControlLeds, queue_size=3)
+    global ledoff_pub
+    ledoff_pub = rospy.Publisher('/roboy/control/matrix/leds/off', Empty, queue_size=10)
+    global ledfreeze_pub
+    ledfreeze_pub = rospy.Publisher("/roboy/control/matrix/leds/freeze", Empty, queue_size=1)
+    rospy.init_node('roboy_speech_recognition')
     global bing 
     bing = BingVoice(BING_KEY)
     
