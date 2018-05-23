@@ -1,10 +1,12 @@
 # BingROS
 ROS nodes for Bing Speech API services
+Bing Speech API token is required.
 
 ## Dependencies
 - `monotonic`
 - `pyaudio`
 - `webrtcvad`
+- `roboy_communication_cognition`
 
 ```
 sudo apt install python-pyaudio
@@ -12,17 +14,14 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-In order to synthesize text call the following service which will return the success status:
+Insert your Bing key in `common/bing_voice.py` and `roboy_speech_recognition/scripts/stt_server.py`.
+
+Launch the node
 ```
-rosservice call /TextToSay "text: 'hello! im roboy'"
+roslaunch roboy_speech_recognition speech_recogniton.launch
 ```
 
 To recognize speech use the following service which will return the recognized string: 
 ```
-rosservice call /TextSpoken 
-```
-
-To use Cerevoice TTS call (corresponding NodeRed socket has to be running):
-```
-rosservice call /CerevoiceTTS "text: 'hello! im roboy'"
+rosservice call /roboy/cognition/speech/recognition {}
 ```
