@@ -9,7 +9,7 @@ import sys
 import signal
 import pyaudio
 import traceback
-import pdb 
+import pdb
 
 abs_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(abs_path, "..", "..", "common"))
@@ -23,7 +23,7 @@ from std_msgs.msg import Empty
 
 BING_KEY = ''
 
-def stt_with_vad(bing):
+def stt_with_vad(bing, language):
 
     FORMAT = pyaudio.paInt16
     CHANNELS = 1
@@ -54,10 +54,10 @@ def stt_with_vad(bing):
 
     def handle_int(sig, chunk):
         global leave, got_a_sentence
-        
+
         leave = True
         got_a_sentence = True
-        
+
     signal.signal(signal.SIGINT, handle_int)
 
     while not leave:
@@ -67,7 +67,7 @@ def stt_with_vad(bing):
         ring_buffer_flags = [0] * NUM_WINDOW_CHUNKS
         ring_buffer_index = 0
         buffer_in = ''
-        
+
         print("* recording")
         stream.start_stream()
         while not got_a_sentence: #and not leave:
@@ -98,14 +98,14 @@ def stt_with_vad(bing):
 
         sys.stdout.write('\n')
         data = b''.join(voiced_frames)
-        
+
         stream.stop_stream()
         print("* done recording")
 
         # recognize speech using Microsoft Bing Voice Recognition
         try:
             # pdb.set_trace()
-            text = bing.recognize(data, language='en-US')
+            text = bing.recognize(data, language=language)
             # pdb.set_trace()
             print('Bing:' + text.encode('utf-8'))
             stream.close()
@@ -115,14 +115,18 @@ def stt_with_vad(bing):
             print("Microsoft Bing Voice Recognition could not understand audio")
         except RequestError as e:
             print("Could not request results from Microsoft Bing Voice Recognition service; {0}".format(e))
-            
+
         got_a_sentence = False
-            
+
     stream.close()
     return text
 
 def stt_subprocess(q):
-	q.put(stt_with_vad(bing))
+	q.put(stt_with_vad(bing, "en-US"))
+
+
+def stt_subprocess_german(q):
+	q.put(stt_with_vad(bing, "de-DE"))
 
 def handle_stt(req):
 	msg = ControlLeds()
@@ -138,9 +142,24 @@ def handle_stt(req):
 	return queue.get()
         #return stt_with_vad(bing)
 
+def handle_stt_german(req):
+	msg = ControlLeds()
+        msg.mode=2
+        msg.duration=0
+        ledmode_pub.publish(msg)
+        queue = Queue()
+	p = Process(target = stt_subprocess_german, args = (queue,))
+	p.start()
+	p.join()
+        msg = Empty()
+        ledfreeze_pub.publish(msg)
+	return queue.get()
+        #return stt_with_vad(bing)
+
 def stt_server():
     #rospy.init_node('roboy_speech_recognition')
     s = rospy.Service('/roboy/cognition/speech/recognition', RecognizeSpeech, handle_stt)
+    rospy.Service('/roboy/cognition/speech/recognition/german', RecognizeSpeech, handle_stt_german)
     global ledmode_pub
     ledmode_pub = rospy.Publisher("/roboy/control/matrix/leds/mode", ControlLeds, queue_size=3)
     global ledoff_pub
@@ -148,9 +167,9 @@ def stt_server():
     global ledfreeze_pub
     ledfreeze_pub = rospy.Publisher("/roboy/control/matrix/leds/freeze", Empty, queue_size=1)
     rospy.init_node('roboy_speech_recognition')
-    global bing 
+    global bing
     bing = BingVoice(BING_KEY)
-    
+
     print "Ready to recognise speech."
     rospy.spin()
 
