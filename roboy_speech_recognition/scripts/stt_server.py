@@ -15,8 +15,8 @@ abs_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(abs_path, "..", "..", "common"))
 
 from bing_voice import *
-from roboy_communication_cognition.srv import RecognizeSpeech
-from roboy_communication_control.msg import ControlLeds
+from roboy_cognition_msgs.srv import RecognizeSpeech
+from roboy_control_msgs.msg import ControlLeds
 from std_msgs.msg import Empty
 
 

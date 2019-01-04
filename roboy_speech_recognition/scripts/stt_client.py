@@ -7,7 +7,7 @@ import ipdb
 import os.path, sys
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 
-from roboy_communication_cognition.srv import RecognizeSpeech
+from roboy_cognition_msgs.srv import RecognizeSpeech
 
 def stt_client():
 	rospy.wait_for_service("RecognizeSpeech")

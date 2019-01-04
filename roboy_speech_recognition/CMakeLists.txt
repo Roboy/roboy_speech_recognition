@@ -9,12 +9,12 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   message_generation
-  roboy_communication_cognition
+  roboy_cognition_msgs
 )
 
 
 catkin_package(
-  CATKIN_DEPENDS roscpp rospy std_msgs message_generation roboy_communication_cognition
+  CATKIN_DEPENDS roscpp rospy std_msgs message_generation roboy_cognition_msgs
 )
 
 
