@@ -146,7 +146,7 @@ with Odas(10002) as source:
     #     print(len(source.stream.buffer))
     audio = r.listen(source)
 
-BING_KEY = "e91e7a4512aa48b3b53b36b56bd1feb7"  # Microsoft Bing Voice Recognition API keys 32-character lowercase hexadecimal strings
+BING_KEY = ""  # Microsoft Bing Voice Recognition API keys 32-character lowercase hexadecimal strings
 try:
     print(r.recognize_bing(audio, key=BING_KEY))
 except sr.UnknownValueError:
