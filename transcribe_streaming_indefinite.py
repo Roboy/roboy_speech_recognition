@@ -92,7 +92,7 @@ class ResumableMicrophoneStream:
             rate=self._rate,
             input=True,
             frames_per_buffer=self._chunk_size,
-            input_device_index=8,
+            input_device_index=11,
             # Run the audio stream asynchronously to fill the buffer object.
             # This is necessary so that the input device's buffer doesn't
             # overflow while the calling thread makes network requests, etc.
@@ -215,13 +215,13 @@ def listen_print_loop(responses, stream):
 
 def main():
     client = speech.SpeechClient()
-    config = speech.types.RecognitionConfig(
-        encoding=speech.enums.RecognitionConfig.AudioEncoding.LINEAR16,
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=SAMPLE_RATE,
         language_code='en-US',
         max_alternatives=1,
         enable_word_time_offsets=True)
-    streaming_config = speech.types.StreamingRecognitionConfig(
+    streaming_config = speech.StreamingRecognitionConfig(
         config=config,
         interim_results=True)
 
