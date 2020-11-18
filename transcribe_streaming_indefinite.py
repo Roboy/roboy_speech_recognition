@@ -52,6 +52,9 @@ CHUNK_SIZE = int(SAMPLE_RATE / 10)  # 100ms
 node = rospy.init_node("google_speech_recognition")
 publisher = rospy.Publisher("/roboy/cognition/speech/recognition", RecognizedSpeech, queue_size=1)
 
+if not rospy.has_param('talking'):
+    rospy.set_param("talking", False)
+
 
 def get_current_time():
     return int(round(time.time() * 1000))
@@ -86,19 +89,31 @@ class ResumableMicrophoneStream:
         self.closed = False
 
         self._audio_interface = pyaudio.PyAudio()
-        self._audio_stream = self._audio_interface.open(
-            format=pyaudio.paInt16,
-            channels=self._num_channels,
-            rate=self._rate,
-            input=True,
-            frames_per_buffer=self._chunk_size,
-            input_device_index=11,
-            # Run the audio stream asynchronously to fill the buffer object.
-            # This is necessary so that the input device's buffer doesn't
-            # overflow while the calling thread makes network requests, etc.
-            stream_callback=self._fill_buffer,
-        )
 
+        info = self._audio_interface.get_host_api_info_by_index(0)
+        numdevices = info.get('deviceCount')
+        default = -1
+        for i in range (0,numdevices):
+                if self._audio_interface.get_device_info_by_host_api_device_index(0,i).get('maxInputChannels')>0:
+                        print("Input Device id ", i, " - ", self._audio_interface.get_device_info_by_host_api_device_index(0,i).get('name'))
+                        if self._audio_interface.get_device_info_by_host_api_device_index(0,i).get('name') == u'default':
+                            print("found default at id: " + str(i))
+                            default = i
+        if default != -1:
+            self._audio_stream = self._audio_interface.open(
+                format=pyaudio.paInt16,
+                channels=self._num_channels,
+                rate=self._rate,
+                input=True,
+                frames_per_buffer=self._chunk_size,
+                input_device_index=default,
+                # Run the audio stream asynchronously to fill the buffer object.
+                # This is necessary so that the input device's buffer doesn't
+                # overflow while the calling thread makes network requests, etc.
+                stream_callback=self._fill_buffer,
+            )
+        else:
+            rospy.logerr("Default audio input not found")
         return self
 
     def __exit__(self, type, value, traceback):
@@ -234,7 +249,7 @@ def main():
 
             if not rospy.get_param("talking"):
                 audio_generator = stream.generator()
-                requests = (speech.types.StreamingRecognizeRequest(
+                requests = (speech.StreamingRecognizeRequest(
                     audio_content=content)
                     for content in audio_generator)
                 # try:
